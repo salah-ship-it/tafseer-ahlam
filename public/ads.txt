@@ -1,0 +1,4 @@
+# ads.txt — AdSense authorization file
+# Replace the placeholder below with your actual AdSense publisher ID
+# Format: google.com, pub-XXXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+# google.com, pub-XXXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
