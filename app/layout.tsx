@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
   },
   robots: { index: true, follow: true },
+  verification: {
+    google: 'zPrpkWS1s2iim_K2azmPoAE3g2R38wNzsb_RAcLU9Z8',
+  },
 }
 
 const websiteSchema = {
