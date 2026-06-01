@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Amiri, Tajawal } from 'next/font/google'
 import './globals.css'
 import { SITE_NAME, SITE_URL, SITE_DESCRIPTION } from '@/lib/config'
+import { Analytics } from '@vercel/analytics/next'
 
 const amiri = Amiri({
   variable: '--font-amiri',
@@ -124,6 +125,7 @@ export default function RootLayout({
             </p>
           </div>
         </footer>
+        <Analytics />
       </body>
     </html>
   )
