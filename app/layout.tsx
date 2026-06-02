@@ -98,7 +98,7 @@ export default function RootLayout({
                 </li>
                 <li>
                   <a
-                    href="/category/الحيوانات"
+                    href="/categories"
                     className="hover:text-gold transition-colors"
                   >
                     الفئات

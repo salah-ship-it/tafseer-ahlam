@@ -37,17 +37,17 @@ export const metadata: Metadata = {
 
 const popularTags = [
   { label: 'الأسد', slug: 'tafseer-hulum-asad' },
-  { label: 'الكلب', slug: 'tafseer-hulum-kalb' },
-  { label: 'الحية', slug: 'tafseer-hulum-haiya' },
-  { label: 'الطيور', slug: 'tafseer-hulum-tayr' },
+  { label: 'الثعبان', slug: 'tafseer-hulum-thuban' },
+  { label: 'الأفعى', slug: 'tafseer-hulum-afaa' },
+  { label: 'الحمام', slug: 'tafseer-hulum-hamam' },
   { label: 'الذهب', slug: 'tafseer-hulum-dhahab' },
-  { label: 'الزواج', slug: 'tafseer-hulum-zawaj' },
-  { label: 'الموت', slug: 'tafseer-hulum-mawt' },
-  { label: 'المطر', slug: 'tafseer-hulum-matar' },
-  { label: 'الشمس', slug: 'tafseer-hulum-shams' },
-  { label: 'القمر', slug: 'tafseer-hulum-qamar' },
-  { label: 'الأسنان', slug: 'tafseer-hulum-asnan' },
-  { label: 'البحر', slug: 'tafseer-hulum-bahr' },
+  { label: 'عقد الزواج', slug: 'tafseer-hulum-aqd-zawaj' },
+  { label: 'موت النفس', slug: 'tafseer-hulum-mawt-nafsi' },
+  { label: 'مطر غزير', slug: 'tafseer-hulum-matar-ghaziir' },
+  { label: 'شمس مشرقة', slug: 'tafseer-hulum-shams-mushriqa' },
+  { label: 'القمر البدر', slug: 'tafseer-hulum-qamar-badr' },
+  { label: 'الأسنان', slug: 'tafseer-hulum-asnaan' },
+  { label: 'البحر الهادئ', slug: 'tafseer-hulum-bahr-haadi' },
 ]
 
 export default function HomePage() {
