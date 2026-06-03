@@ -21,23 +21,33 @@ const nodes = taxonomy as TaxNode[]
 const allDreams = dreams as Dream[]
 const l3Nodes = nodes.filter((n) => n.level === 3)
 
+// Prevent unknown slugs from attempting a dynamic server render — return 404 immediately.
+export const dynamicParams = false
+
 type Props = {
   params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
-  return l3Nodes.map((n) => ({ slug: n.slug }))
+  // Union: taxonomy L3 nodes + any dream slugs that have no taxonomy entry.
+  // Without this, the 17 dreams that exist in dreams.json but are missing from
+  // taxonomy.json are never pre-rendered and will 404 on the live site.
+  const taxSlugs = new Set(l3Nodes.map((n) => n.slug))
+  const dreamOnlyParams = allDreams
+    .filter((d) => !taxSlugs.has(d.slug))
+    .map((d) => ({ slug: d.slug }))
+  return [...l3Nodes.map((n) => ({ slug: n.slug })), ...dreamOnlyParams]
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const taxNode = l3Nodes.find((n) => n.slug === slug)
-  if (!taxNode) return {}
-
   const dream = allDreams.find((d) => d.slug === slug)
+  if (!taxNode && !dream) return {}
+
   const url = `${SITE_URL}/dream/${slug}`
-  const title = dream?.metaTitle ?? taxNode.metaTitleAr
-  const description = dream?.metaDescription ?? taxNode.metaDescriptionAr
+  const title = dream?.metaTitle ?? taxNode?.metaTitleAr ?? ''
+  const description = dream?.metaDescription ?? taxNode?.metaDescriptionAr ?? ''
 
   return {
     title,
@@ -62,15 +72,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function DreamPage({ params }: Props) {
   const { slug } = await params
   const taxNode = l3Nodes.find((n) => n.slug === slug)
-  if (!taxNode) notFound()
-
   const dream = allDreams.find((d) => d.slug === slug)
-  const l2Node = nodes.find((n) => n.slug === taxNode.parent)
-  const l1Node = l2Node ? nodes.find((n) => n.slug === l2Node.parent) : null
 
-  const l2Siblings = nodes.filter(
-    (n) => n.level === 3 && n.parent === taxNode.parent && n.slug !== slug
-  )
+  // Both missing → genuine 404 (dynamicParams=false already blocks unknown slugs
+  // at the framework level, but this guards the runtime path too).
+  if (!taxNode && !dream) notFound()
+
+  // For dreams present in dreams.json but absent from taxonomy (17 orphan slugs):
+  // derive the display name from the dream title and resolve the L1 category node
+  // via dream.category so breadcrumb + sibling lookup still work.
+  const nameAr = taxNode?.nameAr ?? dream!.title.replace(/^تفسير حلم\s+/, '')
+
+  const l2Node = taxNode ? nodes.find((n) => n.slug === taxNode.parent) ?? null : null
+  const l1Node = l2Node
+    ? nodes.find((n) => n.slug === l2Node.parent) ?? null
+    : nodes.find((n) => n.level === 1 && n.nameAr === dream?.category) ?? null
+
+  // Siblings: use taxonomy parent when available; orphan dreams fall through to
+  // the l1Cousins branch below which finds any L3 nodes under the same L1 category.
+  const l2Siblings = taxNode
+    ? nodes.filter((n) => n.level === 3 && n.parent === taxNode.parent && n.slug !== slug)
+    : []
   const siblings =
     l2Siblings.length >= 3
       ? l2Siblings.slice(0, 6)
@@ -95,7 +117,7 @@ export default async function DreamPage({ params }: Props) {
     { name: 'الرئيسية', item: SITE_URL },
     ...(l1Node ? [{ name: l1Node.nameAr, item: `${SITE_URL}/category/${l1Node.slug}` }] : []),
     ...(l2Node ? [{ name: l2Node.nameAr, item: `${SITE_URL}/category/${l2Node.slug}` }] : []),
-    { name: taxNode.nameAr, item: pageUrl },
+    { name: nameAr, item: pageUrl },
   ]
 
   const breadcrumbSchema = {
@@ -173,7 +195,7 @@ export default async function DreamPage({ params }: Props) {
               </>
             )}
             <li aria-hidden="true" className="breadcrumb-sep">‹</li>
-            <li className="text-cream/60 font-medium">{taxNode.nameAr}</li>
+            <li className="text-cream/60 font-medium">{nameAr}</li>
           </ol>
         </nav>
 
@@ -187,7 +209,7 @@ export default async function DreamPage({ params }: Props) {
           <div className="title-with-lines mb-4">
             <span className="title-line title-line-start" aria-hidden="true" />
             <h1 className="font-amiri text-gold text-4xl sm:text-5xl font-bold leading-tight text-center shrink">
-              تفسير حلم {taxNode.nameAr}
+              تفسير حلم {nameAr}
             </h1>
             <span className="title-line title-line-end" aria-hidden="true" />
           </div>
@@ -221,10 +243,10 @@ export default async function DreamPage({ params }: Props) {
           <section className="rounded-2xl border border-gold/15 bg-navy-light p-10 text-center">
             <div className="text-4xl mb-4 text-gold/40">✦</div>
             <h2 className="font-amiri text-gold text-2xl font-bold mb-3">
-              قريباً — تفسير حلم {taxNode.nameAr}
+              قريباً — تفسير حلم {nameAr}
             </h2>
             <p className="text-cream/60 leading-relaxed max-w-md mx-auto">
-              {taxNode.descriptionAr}. نعمل على إضافة تفسير تفصيلي لهذه الرؤيا قريباً بحسب ابن سيرين والنابلسي.
+              {taxNode?.descriptionAr ? `${taxNode.descriptionAr}. ` : ''}نعمل على إضافة تفسير تفصيلي لهذه الرؤيا قريباً بحسب ابن سيرين والنابلسي.
             </p>
           </section>
         )}
