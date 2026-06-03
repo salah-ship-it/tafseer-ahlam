@@ -82,18 +82,29 @@ export default function HomePage() {
         <div className="stars-bg absolute inset-0 pointer-events-none" aria-hidden="true" />
 
         <div className="relative z-10 text-center w-full max-w-3xl mx-auto">
-          <p className="font-tajawal text-gold/50 text-sm tracking-widest mb-4 uppercase">
+          <p className="hero-fade hero-fade-delay-1 font-tajawal text-gold/50 text-sm tracking-widest mb-4 uppercase">
             بسم الله الرحمن الرحيم
           </p>
-          <h1 className="font-amiri text-5xl sm:text-6xl md:text-7xl text-gold font-bold mb-5 leading-tight">
+          <h1 className="hero-title hero-fade hero-fade-delay-2 font-amiri text-6xl sm:text-7xl md:text-8xl text-gold font-bold mb-5 leading-tight">
             {SITE_NAME}
           </h1>
-          <p className="font-tajawal text-cream/60 text-lg sm:text-xl mb-10 leading-relaxed">
+          <p className="hero-fade hero-fade-delay-3 font-tajawal text-cream/60 text-lg sm:text-xl mb-6 leading-relaxed">
             اكتشف معاني رؤاك بتفاسير ابن سيرين والنابلسي والعلماء الكبار
           </p>
 
-          <DreamSearch dreams={typedDreams} />
+          <div className="diamond-divider hero-fade hero-fade-delay-3 mb-8" aria-hidden="true" />
+
+          <div className="hero-fade hero-fade-delay-4">
+            <DreamSearch dreams={typedDreams} />
+          </div>
         </div>
+
+        {/* bottom gradient fade into page background */}
+        <div
+          className="absolute bottom-0 inset-x-0 h-28 pointer-events-none z-10"
+          style={{ background: 'linear-gradient(to bottom, transparent, var(--navy))' }}
+          aria-hidden="true"
+        />
       </section>
 
       <div className="max-w-6xl mx-auto px-4">
@@ -111,11 +122,9 @@ export default function HomePage() {
                 key={cat.slug}
                 href={`/category/${cat.slug}`}
                 className="
-                  group flex flex-col items-center justify-center gap-3
+                  cat-card group flex flex-col items-center justify-center gap-3
                   rounded-2xl border border-gold/15 bg-navy-light
                   p-6 text-center
-                  hover:border-gold/40 hover:bg-gold/5
-                  transition-all duration-200
                 "
               >
                 <span className="font-amiri text-gold text-lg font-semibold group-hover:text-gold-light transition-colors">

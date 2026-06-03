@@ -146,7 +146,7 @@ export default async function DreamPage({ params }: Props) {
       <article className="max-w-4xl mx-auto px-4 py-10">
         {/* ── Breadcrumb ── */}
         <nav aria-label="مسار التنقل" className="mb-8">
-          <ol className="flex items-center flex-wrap gap-2 text-sm text-muted">
+          <ol className="flex items-center flex-wrap gap-1 text-xs text-muted tracking-wide">
             <li>
               <Link href="/" className="hover:text-gold transition-colors">
                 الرئيسية
@@ -154,7 +154,7 @@ export default async function DreamPage({ params }: Props) {
             </li>
             {l1Node && (
               <>
-                <li aria-hidden="true" className="text-gold/30">/</li>
+                <li aria-hidden="true" className="breadcrumb-sep">‹</li>
                 <li>
                   <Link href={`/category/${l1Node.slug}`} className="hover:text-gold transition-colors">
                     {l1Node.nameAr}
@@ -164,7 +164,7 @@ export default async function DreamPage({ params }: Props) {
             )}
             {l2Node && (
               <>
-                <li aria-hidden="true" className="text-gold/30">/</li>
+                <li aria-hidden="true" className="breadcrumb-sep">‹</li>
                 <li>
                   <Link href={`/category/${l2Node.slug}`} className="hover:text-gold transition-colors">
                     {l2Node.nameAr}
@@ -172,8 +172,8 @@ export default async function DreamPage({ params }: Props) {
                 </li>
               </>
             )}
-            <li aria-hidden="true" className="text-gold/30">/</li>
-            <li className="text-cream/70">{taxNode.nameAr}</li>
+            <li aria-hidden="true" className="breadcrumb-sep">‹</li>
+            <li className="text-cream/60 font-medium">{taxNode.nameAr}</li>
           </ol>
         </nav>
 
@@ -184,9 +184,13 @@ export default async function DreamPage({ params }: Props) {
               {l2Node.nameAr}
             </div>
           )}
-          <h1 className="font-amiri text-gold text-4xl sm:text-5xl font-bold leading-tight mb-4">
-            تفسير حلم {taxNode.nameAr}
-          </h1>
+          <div className="title-with-lines mb-4">
+            <span className="title-line title-line-start" aria-hidden="true" />
+            <h1 className="font-amiri text-gold text-4xl sm:text-5xl font-bold leading-tight text-center shrink">
+              تفسير حلم {taxNode.nameAr}
+            </h1>
+            <span className="title-line title-line-end" aria-hidden="true" />
+          </div>
           {dream && (
             <p className="text-cream/70 text-lg leading-relaxed border-s-4 border-gold/30 ps-4">
               {dream.summary}
@@ -202,7 +206,7 @@ export default async function DreamPage({ params }: Props) {
             </h2>
             <div className="space-y-6">
               {dream.interpretations.map((interp, i) => (
-                <div key={i} className="rounded-2xl border border-gold/15 bg-navy-light p-6">
+                <div key={i} className="interp-card rounded-2xl border border-gold/15 bg-navy-light p-6">
                   <h3 className="font-amiri text-gold-light text-xl font-semibold mb-3 flex items-center gap-2">
                     <span className="text-gold/40 text-sm">✦</span>
                     تفسير {interp.source}
@@ -237,7 +241,7 @@ export default async function DreamPage({ params }: Props) {
             <h2 id="siblings-heading" className="font-amiri text-gold text-2xl font-bold mb-6">
               أحلام مشابهة في نفس الفئة
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="siblings-scroll">
               {siblings.map((sibling) => {
                 const siblingDream = allDreams.find((d) => d.slug === sibling.slug)
                 if (siblingDream) {
@@ -271,6 +275,27 @@ export default async function DreamPage({ params }: Props) {
           </div>
         )}
       </article>
+
+      {/* ── Scroll to top ── */}
+      <button
+        id="scroll-top-btn"
+        type="button"
+        aria-label="العودة للأعلى"
+      >
+        ↑ العودة للأعلى
+      </button>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){
+  var btn = document.getElementById('scroll-top-btn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+  window.addEventListener('scroll', function(){
+    btn.classList.toggle('is-visible', window.scrollY > 300);
+  }, {passive: true});
+})();`,
+        }}
+      />
     </>
   )
 }

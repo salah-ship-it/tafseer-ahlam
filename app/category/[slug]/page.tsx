@@ -62,6 +62,13 @@ export default async function CategoryPage({ params }: Props) {
   }
 
   const children = nodes.filter((n) => n.parent === node.slug)
+
+  // Count L3 dreams per L2 child, for badge display
+  const childDreamCount = (child: TaxNode) =>
+    child.level === 2
+      ? nodes.filter((n) => n.level === 3 && n.parent === child.slug).length
+      : null
+
   const pageUrl = `${SITE_URL}/category/${node.slug}`
   const parent = node.level === 2 ? nodes.find((n) => n.slug === node.parent) : null
 
@@ -161,12 +168,19 @@ export default async function CategoryPage({ params }: Props) {
                   <Link
                     key={child.slug}
                     href={href}
-                    className="rounded-2xl border border-gold/15 bg-navy-light p-6 hover:border-gold/40 transition-colors group flex flex-col"
+                    className="cat-card rounded-2xl border border-gold/15 bg-navy-light p-6 group flex flex-col"
                   >
-                    <h3 className="font-amiri text-gold text-xl font-semibold group-hover:text-gold-light transition-colors">
-                      {child.nameAr}
-                    </h3>
-                    <p className="text-cream/50 text-sm mt-2 line-clamp-2 flex-1">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <h3 className="font-amiri text-gold text-xl font-semibold group-hover:text-gold-light transition-colors">
+                        {child.nameAr}
+                      </h3>
+                      {childDreamCount(child) !== null && (
+                        <span className="shrink-0 mt-1 text-xs font-tajawal text-gold/55 border border-gold/20 rounded-full px-2.5 py-0.5 group-hover:border-gold/40 group-hover:text-gold/80 transition-colors">
+                          {childDreamCount(child)} تفسير
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-cream/50 text-sm line-clamp-2 flex-1">
                       {child.descriptionAr}
                     </p>
                     {child.level === 3 && (
