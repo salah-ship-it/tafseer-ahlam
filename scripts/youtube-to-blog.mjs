@@ -101,6 +101,34 @@ async function fetchDescription(videoUrl) {
   }
 }
 
+// ─── promo filter ────────────────────────────────────────────────────────────
+
+// Lines from YouTube descriptions that advertise WhatsApp/PayPal services
+// are stripped before the description is used in any generated content.
+const PROMO_PATTERNS = [
+  /paypal/i,
+  /whatsapp/i,
+  /واتس/,
+  /الباي\s*بال/,
+  /ادفع/,       // catches ادفعو / ادفعوا / ادفع
+  /الرسوم/,
+]
+
+/**
+ * Remove lines that contain any promo pattern.
+ * Returns null (not an empty string) when nothing clean remains,
+ * so callers can fall back to title-only content gracefully.
+ */
+function stripPromo(text) {
+  if (!text) return null
+  const clean = text
+    .split('\n')
+    .filter(line => !PROMO_PATTERNS.some(re => re.test(line)))
+    .join('\n')
+    .trim()
+  return clean.length > 0 ? clean : null
+}
+
 // ─── content generators ──────────────────────────────────────────────────────
 
 function makeExcerpt(title, description) {
@@ -161,8 +189,13 @@ async function main() {
   console.log(`Title : ${oembed.title}`)
 
   process.stdout.write('Fetching video description … ')
-  const description = await fetchDescription(videoUrl)
-  console.log(description ? `done (${description.length} chars)` : 'not available')
+  const rawDescription = await fetchDescription(videoUrl)
+  const description = stripPromo(rawDescription)
+  if (rawDescription && !description) {
+    console.log('done (all lines were promo — description discarded)')
+  } else {
+    console.log(description ? `done (${description.length} chars)` : 'not available')
+  }
 
   const slug = toSlug(oembed.title, videoId)
   const today = new Date().toISOString().slice(0, 10)
