@@ -3,6 +3,20 @@ export interface Interpretation {
   text: string
 }
 
+export interface BlogPost {
+  slug: string
+  titleAr: string
+  date: string
+  category: string
+  youtubeUrl: string
+  youtubeId: string | null
+  thumbnailUrl: string
+  excerpt: string
+  content: string
+  metaTitle: string
+  metaDescription: string
+}
+
 export interface Dream {
   slug: string
   title: string

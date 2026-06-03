@@ -104,6 +104,14 @@ export default function RootLayout({
                     الفئات
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="/blog"
+                    className="hover:text-gold transition-colors"
+                  >
+                    المدونة
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>
